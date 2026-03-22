@@ -2,9 +2,10 @@ Bootstrap: docker
 From: nvcr.io/nvidia/isaac-sim:5.1.0
 
 %files
-    requirements.txt /tmp/requirements.txt
-    source/geniesim/generator/requirements.txt /tmp/requirements.generator.txt
-    source/teleop/requirements.txt /tmp/requirements.teleop.txt
+    # 현재 작업 디렉토리의 파일들을 컨테이너 내부 /tmp로 복사
+    ./requirements.txt /tmp/requirements.txt
+    ./source/geniesim/generator/requirements.txt /tmp/requirements.generator.txt
+    ./source/teleop/requirements.txt /tmp/requirements.teleop.txt
 
 %environment
     export ACCEPT_EULA=Y
@@ -14,6 +15,7 @@ From: nvcr.io/nvidia/isaac-sim:5.1.0
     export LC_ALL=en_US.UTF-8
 
 %post
+    ls -l /tmp/requirements.txt  # 파일이 있는지 확인하는 로그 출력
     export DEBIAN_FRONTEND=noninteractive
     export LANG=en_US.UTF-8
     export LC_ALL=en_US.UTF-8
