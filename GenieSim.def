@@ -1,0 +1,58 @@
+Bootstrap: docker
+From: nvcr.io/nvidia/isaac-sim:5.1.0
+
+%files
+    requirements.txt /tmp/requirements.txt
+    source/geniesim/generator/requirements.txt /tmp/requirements.generator.txt
+    source/teleop/requirements.txt /tmp/requirements.teleop.txt
+
+%environment
+    export ACCEPT_EULA=Y
+    export PRIVACY_CONSENT=Y
+    export DEBIAN_FRONTEND=noninteractive
+    export LANG=en_US.UTF-8
+    export LC_ALL=en_US.UTF-8
+
+%post
+    export DEBIAN_FRONTEND=noninteractive
+    export LANG=en_US.UTF-8
+    export LC_ALL=en_US.UTF-8
+
+    apt-get update && apt-get install -y \
+        bash wget curl git git-lfs sudo lsb-release unzip xterm \
+        build-essential cmake libeigen3-dev ffmpeg jq vim acl \
+        python3 python3-pip python3-venv \
+        libvulkan1 vulkan-tools \
+        libx11-6 libxrandr2 libxss1 libxcursor1 libxi6 libglu1-mesa \
+        libgl1 libegl1 libnss3 libxcomposite1 libxdamage1 libxext6 \
+        liburing2 liburing-dev locales software-properties-common
+
+    locale-gen en_US en_US.UTF-8
+    update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8
+
+    add-apt-repository universe -y
+    curl -L -o /tmp/ros2-apt-source.deb "https://github.com/ros-infrastructure/ros-apt-source/releases/download/1.1.0/ros2-apt-source_1.1.0.noble_all.deb"
+    dpkg -i /tmp/ros2-apt-source.deb
+    
+    apt-get update
+    apt-get install -y ros-jazzy-desktop ros-jazzy-rmw-cyclonedds-cpp \
+        ros-jazzy-vision-msgs-rviz-plugins ros-jazzy-joy \
+        ros-dev-tools graphviz libgraphviz-dev
+
+    /isaac-sim/python.sh -m pip install pip -U
+    /isaac-sim/python.sh -m pip install -r /tmp/requirements.txt
+
+    mkdir -p /geniesim
+    python3 -m venv /geniesim/generator_env
+    /geniesim/generator_env/bin/pip install pip -U
+    /geniesim/generator_env/bin/pip install -r /tmp/requirements.generator.txt
+
+    python3 -m venv /geniesim/record_env
+    /geniesim/record_env/bin/pip install pip -U
+    /geniesim/record_env/bin/pip install rosbags pyyaml opencv-python rosbags.image "numpy<2.0"
+
+    python3 -m venv /geniesim/teleop_env
+    /geniesim/teleop_env/bin/pip install pip -U
+    /geniesim/teleop_env/bin/pip install -r /tmp/requirements.teleop.txt
+
+    rm -rf /var/lib/apt/lists/*
