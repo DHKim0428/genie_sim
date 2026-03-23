@@ -16,6 +16,8 @@ From: nvcr.io/nvidia/isaac-sim:5.1.0
 
 %post
     # ls -l /tmp/requirements.txt  # 파일이 있는지 확인하는 로그 출력
+    apt-get update && apt-get install -y wget curl
+
     export DEBIAN_FRONTEND=noninteractive
     export LANG=en_US.UTF-8
     export LC_ALL=en_US.UTF-8
