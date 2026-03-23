@@ -20,6 +20,15 @@ From: nvcr.io/nvidia/isaac-sim:5.1.0
     export LANG=en_US.UTF-8
     export LC_ALL=en_US.UTF-8
 
+    USER_ID="DHKim0428"
+    BRANCH="main"
+    REPO_URL="https://raw.githubusercontent.com/${USER_ID}/genie_sim/${BRANCH}"
+    
+    wget ${REPO_URL}/requirements.txt -O /tmp/requirements.txt
+    mkdir -p /tmp/geniesim/generator /tmp/teleop
+    wget ${REPO_URL}/source/geniesim/generator/requirements.txt -O /tmp/requirements.generator.txt
+    wget ${REPO_URL}/source/teleop/requirements.txt -O /tmp/requirements.teleop.txt
+
     apt-get update && apt-get install -y \
         bash wget curl git git-lfs sudo lsb-release unzip xterm \
         build-essential cmake libeigen3-dev ffmpeg jq vim acl \
